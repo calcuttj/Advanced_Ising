@@ -4,6 +4,9 @@
 *.out
 myprog
 *.txt
-*.png
 *.gnu~
 Makefile~
+*.log
+*.aux
+*.gz
+*.toc
