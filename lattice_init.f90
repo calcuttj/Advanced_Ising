@@ -2,10 +2,9 @@ module lattice_init
 
 
   Implicit None
+
   public init_lattice
   public randy
-
-
 
 contains
   subroutine init_lattice(lattice,N,spin)
@@ -35,4 +34,13 @@ contains
 
 
   end subroutine randy
+
+  subroutine find_friends(N,init_lattice,friends,indx)
+    integer, intent(in) :: N, indx
+    integer, intent(out) :: friends(4,N)
+
+
+
+  end subroutine find_friends
+
 end module lattice_init

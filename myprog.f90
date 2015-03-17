@@ -7,8 +7,9 @@ program advanced_ising
   implicit none
 
   integer, parameter :: N=10
-  integer :: ising_lattice(N,N)
-  integer :: iter, iterations = 5000
+  integer :: ising_lattice(N,N), FRIENDS(4,N)
+  integer :: iter, iterations = 200
+  integer :: x, y, indx
   real(8) :: initial_temp = 0.05
   real(8) :: final_temp = 0.1
   real(8) :: T, temp_step_size = 0.05
@@ -55,6 +56,21 @@ subroutine write_lattice(lattice,N)
   
 end subroutine write_lattice
 
+subroutine indx_to_coord(indx,N,x,y)
+integer, intent(in) :: indx, N
+integer, intent(out) :: x,y
 
+x = indx/N
+y = mod(indx/N)
+
+end subroutine indx_to_coord
+
+subroutine coord_to_indx(x,y,N,indx)
+integer, intent(in) :: x,y,N
+integer, intent(out) :: indx
+
+indx = x*N+y
+
+end subroutine coord_to_indx
 
 
