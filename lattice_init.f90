@@ -38,13 +38,31 @@ contains
 
   subroutine find_friends(N,init_lattice,friends,indx)
     integer, intent(in) :: N, indx
-    integer, intent(out) :: friends(4,N)
+    integer, intent(out) :: friends(4,N) !!!Should be friends(4,(N*N)-1) we have N^2 particles and go from 0 to N^2 -1
+
+    !!!! Can we do (4,0:(N*N)-1) to match up with our indx system?
     
     integer :: i,j
-
+    
     call indx_to_coord(indx,N,i,j)
+    
+    if (i == 1) then !!North
+    else
+    end if
+    
+    if (i == N) then !!South
+    else
+    end if
+    
+    if (j == 1) then !!East
+    else
+    end if
+    
+    if (j == N) then !!West
+    else
+    end if
 
-
+    
   end subroutine find_friends
   
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  
