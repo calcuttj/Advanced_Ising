@@ -4,6 +4,8 @@ program advanced_ising
   use cluster
   use magnetization
 
+  
+  
   implicit none
 
   integer, parameter :: N=10
@@ -56,21 +58,26 @@ subroutine write_lattice(lattice,N)
   
 end subroutine write_lattice
 
-subroutine indx_to_coord(indx,N,x,y)
-integer, intent(in) :: indx, N
-integer, intent(out) :: x,y
 
-x = indx/N
-y = mod(indx/N)
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!Moved these to lattice_init.f90
 
-end subroutine indx_to_coord
+!!$subroutine indx_to_coord(indx,N,x,y)
+!!$integer, intent(in) :: indx, N
+!!$integer, intent(out) :: x,y
+!!$
+!!$x = indx/N
+!!$y = mod(indx/N)
+!!$
+!!$end subroutine indx_to_coord
+!!$
+!!$subroutine coord_to_indx(x,y,N,indx)
+!!$integer, intent(in) :: x,y,N
+!!$integer, intent(out) :: indx
+!!$
+!!$indx = x*N+y
+!!$
+!!$end subroutine coord_to_indx
 
-subroutine coord_to_indx(x,y,N,indx)
-integer, intent(in) :: x,y,N
-integer, intent(out) :: indx
-
-indx = x*N+y
-
-end subroutine coord_to_indx
-
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

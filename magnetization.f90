@@ -15,5 +15,8 @@ contains
     mag = mag/(N*N)
   end subroutine calc_mag
 
+  subroutine calc_suscept()
+    
+  end subroutine calc_suscept
 
 end module magnetization
