@@ -7,22 +7,29 @@ module lattice_init
   public randy
   public find_friends
   public initialize_all
+  public coord_to_indx
+  public indx_to_coord
+
 contains
   subroutine initialize_all(lattice,N,spin,friends)
     integer intent(in) :: N, spin
     integer intent(out) :: lattice(N,N), friends(4,0:(N*N-1))
+
     call init_lattice(lattice,N,spin)
     call build_friends(N,lattice,friends)
+
   end subroutine initialize_all
 
   subroutine init_lattice(lattice,N,spin)
     integer, intent(in) :: N,spin
     integer, dimension(N,N), intent(out) :: lattice
+
     if (spin == 1 .or. spin == -1) then
        lattice = spin 
     else
        call randy(lattice,N)
     end if
+
   end subroutine init_lattice
 
   subroutine randy(lattice,N)
@@ -55,82 +62,59 @@ contains
     end do
   end subroutine build_friends
   
-  subroutine find_friends(N,friends,indx) !!Removed init_lattice from argument - unneccessary 
-    integer, intent(in) :: N, indx
-    integer, intent(out) :: friends(4,0:(N*N-1)) !!!Should be friends(4,(N*N)-1) we have N^2 particles and go from 0 to N^2 -1
-    
-    !!!! Can we do (4,0:(N*N)-1) to match up with our indx system?
-    
-    integer :: i,j
-    integer :: north_indx, south_indx, east_indx, west_indx = 0
-    call indx_to_coord(indx,N,i,j)
-    
-    if (i == 1) then !!North
-       call coord_to_indx(north_indx,N,N,j)
-    else
-       call coord_to_indx(north_indx,N,i-1,j)
-    end if
-    friends(1:indx) = north_dinx
+  subroutine find_friends(N,friends)
+    integer, intent(in) :: N
+    integer, intent(out) :: friends(4,0:(N*N-1))
+    integer :: i, j, indx, north_indx, east_indx, south_indx, west_indx
 
-    if (i == N) then !!South
-       call coord_to_indx(south_indx,N,1,j)
-    else
-       call coord_to_indx(south_indx,N,i+1,j)
-    end if
-    friends(2:indx) = south_indx
+    do indx = 0, (N*N-1)
+       call indx_to_coord(indx,N,i,j)
+       if (i == 1) then !!North
+          call coord_to_indx(N,j,N,north_indx)
+       else
+          call coord_to_indx(i-1,j,N,north_indx)
+       end if
+       friends(1,indx) = north_indx
 
-    if (j == 1) then !!West
-       call coord_to_indx(west_indx,N,i,N)
-    else
-       call coord_to_indx(west_indx,N,i,j-1)
-    end if
-    friends(3:indx) = west_indx    
+       if (j == N) then !!East
+          call coord_to_indx(i,1,N,east_indx)
+       else
+          call coord_to_indx(i,j+1,N,east_indx)
+       end if
+       friends(2,indx) = east_indx
 
-    if (j == N) then !!East
-       call coord_to_indx(east_indx,N,i,1)
-    else
-       call coord_to_indx(east_indx,N,i,j+1)
-    end if
-    friends(4:indx) = east_indx
-    
+       if (i == N) then !!South
+          call coord_to_indx(1,j,N,south_indx)
+       else 
+          call coord_to_indx(i+1,j,N,south_indx)
+       end if
+       friends(3,indx) = south_indx
+
+       if (j == 1) then !!West
+          call coord_to_indx(i,N,N,west_indx)
+       else
+          call coord_to_indx(i,j-1,N,west_indx)
+       end if
+       friends(4,indx) = west_indx
+    end do
+
   end subroutine find_friends
-  
 
-  
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  
-!Moved from myprog.f90 ---> Easier to use in building neighbors lattice
-subroutine indx_to_coord(indx,N,x,y)
-  integer, intent(in) :: indx, N
-  integer, intent(out) :: x,y
-  !x = indx/N !!! I think this should be (indx/N + 1)
-             !!! Example: the first row (x = 1) contains sites with indx {0:N-1}
-             !!!          indx/N would make x = 0 for all in first row. 
-  x = (indx/N +1)
-  ! y = mod(indx/N) !!! Should this be mod((indx+1),N) ?
-                  !!! Similar reasoning as above
-  y = mod((indx+1),N)
+  subroutine indx_to_coord(indx,N,x,y)
+    integer, intent(in) :: indx, N
+    integer, intent(out) :: x,y
 
-                   !!! Note: these would be fine if we changed how our lattice was defined: each dimension ranging from 0 to N-1 rather than 1 to N
-end subroutine indx_to_coord
+    x = indx/N+1
+    y = mod(indx,N)+1
 
-subroutine coord_to_indx(x,y,N,indx)
-  integer, intent(in) :: x,y,N
-  integer, intent(out) :: indx
-  ! indx = x*N+y !!I think this should be (x-1)*N + (y-1)
-               !!Example (N =3): 
-               !!        x = 1, y = 1 results in indx = 0
-               !!        x = 1, y = 2 results in indx = 1
-               !!        x = 1, y = 3 results in indx = 2
-               !!        x = 2, y = 1 results in indx = 3
-               !!        And so on
-               !!       
-               !!        Resulting in our array corresponding to: 
-               !!        0, 1, 2
-               !!        3, 4, 5
-               !!        6, 7, 8
+  end subroutine indx_to_coord
 
-  indx = (x-1)*N + (y-1)
- 
-end subroutine coord_to_indx
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  subroutine coord_to_indx(x,y,N,indx)
+    integer, intent(in) :: x,y,N
+    integer, intent(out) :: indx
+
+    indx = (x-1)*N+(y-1)
+
+  end subroutine coord_to_indx
+
 end module lattice_init

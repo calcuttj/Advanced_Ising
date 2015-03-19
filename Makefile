@@ -7,7 +7,7 @@ LINK = $(FC) $(LDFLAGS)
 
 OBJS =
 OBJS += lattice_init.o
-OBJS += magnetization.o
+OBJS += calculations.o
 OBJS += cluster.o
 OBJS += myprog.o
 all: myprog
