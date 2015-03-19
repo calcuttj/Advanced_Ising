@@ -6,17 +6,23 @@ module lattice_init
   public init_lattice
   public randy
   public find_friends
-  
+  public initialize_all
 contains
-  subroutine initialize_all
-    
+  subroutine initialize_all(lattice,N,spin,friends)
+    integer intent(in) :: N, spin
+    integer intent(out) :: lattice(N,N), friends(4,0:(N*N-1))
+    call init_lattice(lattice,N,spin)
+    call build_friends(N,lattice,friends)
   end subroutine initialize_all
+
   subroutine init_lattice(lattice,N,spin)
     integer, intent(in) :: N,spin
     integer, dimension(N,N), intent(out) :: lattice
-    
-    lattice = spin 
-  
+    if (spin == 1 .or. spin == -1) then
+       lattice = spin 
+    else
+       call randy(lattice,N)
+    end if
   end subroutine init_lattice
 
   subroutine randy(lattice,N)
