@@ -36,7 +36,17 @@ contains
 
   end subroutine randy
 
-  subroutine find_friends(N,init_lattice,friends,indx)
+  subroutine build_friends(N,lattice,friends)
+    integer, intent(in):: N, lattice
+    integer, intent(out) :: friends
+    
+    integer :: counter = 0
+    do counter = 0, N*N-1
+       call find_friends(N,friends,counter)
+    end do
+  end subroutine build_friends
+  
+  subroutine find_friends(N,friends,indx) !!Removed init_lattice from argument - unneccessary 
     integer, intent(in) :: N, indx
     integer, intent(out) :: friends(4,0:(N*N-1)) !!!Should be friends(4,(N*N)-1) we have N^2 particles and go from 0 to N^2 -1
     
@@ -75,6 +85,8 @@ contains
     friends(4:indx) = east_indx
     
   end subroutine find_friends
+  
+
   
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  
 !Moved from myprog.f90 ---> Easier to use in building neighbors lattice
