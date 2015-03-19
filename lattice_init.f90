@@ -54,7 +54,7 @@ contains
 
   subroutine build_friends(N,lattice,friends)
     integer, intent(in):: N, lattice(N,N)
-    integer, intent(out) :: friends(4,0:(N*N-1))
+    integer, intent(inout) :: friends(4,0:(N*N-1))
     
     integer :: counter = 0
     do counter = 0, N*N-1
@@ -62,12 +62,12 @@ contains
     end do
   end subroutine build_friends
   
-  subroutine find_friends(N,friends)
-    integer, intent(in) :: N
+  subroutine find_friends(N,friends,counter)
+    integer, intent(in) :: N, counter
     integer, intent(out) :: friends(4,0:(N*N-1))
-    integer :: i, j, indx, north_indx, east_indx, south_indx, west_indx
+    integer :: i, j, north_indx, east_indx, south_indx, west_indx
 
-       call indx_to_coord(indx,N,i,j)
+       call indx_to_coord(counter,N,i,j)
        if (i == 1) then !!North
           call coord_to_indx(N,j,N,north_indx)
        else
