@@ -67,7 +67,6 @@ contains
     integer, intent(out) :: friends(4,0:(N*N-1))
     integer :: i, j, indx, north_indx, east_indx, south_indx, west_indx
 
-    do indx = 0, (N*N-1)
        call indx_to_coord(indx,N,i,j)
        if (i == 1) then !!North
           call coord_to_indx(N,j,N,north_indx)
@@ -96,7 +95,6 @@ contains
           call coord_to_indx(i,j-1,N,west_indx)
        end if
        friends(4,indx) = west_indx
-    end do
 
   end subroutine find_friends
 
