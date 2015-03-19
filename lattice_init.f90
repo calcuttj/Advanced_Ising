@@ -38,30 +38,41 @@ contains
 
   subroutine find_friends(N,init_lattice,friends,indx)
     integer, intent(in) :: N, indx
-    integer, intent(out) :: friends(4,N) !!!Should be friends(4,(N*N)-1) we have N^2 particles and go from 0 to N^2 -1
-
+    integer, intent(out) :: friends(4,0:(N*N-1)) !!!Should be friends(4,(N*N)-1) we have N^2 particles and go from 0 to N^2 -1
+    
     !!!! Can we do (4,0:(N*N)-1) to match up with our indx system?
     
     integer :: i,j
-    
+    integer :: north_indx, south_indx, east_indx, west_indx = 0
     call indx_to_coord(indx,N,i,j)
     
     if (i == 1) then !!North
+       call coord_to_indx(north_indx,N,N,j)
     else
+       call coord_to_indx(north_indx,N,i-1,j)
     end if
-    
-    if (i == N) then !!South
-    else
-    end if
-    
-    if (j == 1) then !!East
-    else
-    end if
-    
-    if (j == N) then !!West
-    else
-    end if
+    friends(1:indx) = north_dinx
 
+    if (i == N) then !!South
+       call coord_to_indx(south_indx,N,1,j)
+    else
+       call coord_to_indx(south_indx,N,i+1,j)
+    end if
+    friends(2:indx) = south_indx
+
+    if (j == 1) then !!West
+       call coord_to_indx(west_indx,N,i,N)
+    else
+       call coord_to_indx(west_indx,N,i,j-1)
+    end if
+    friends(3:indx) = west_indx    
+
+    if (j == N) then !!East
+       call coord_to_indx(east_indx,N,i,1)
+    else
+       call coord_to_indx(east_indx,N,i,j+1)
+    end if
+    friends(4:indx) = east_indx
     
   end subroutine find_friends
   
@@ -70,13 +81,13 @@ contains
 subroutine indx_to_coord(indx,N,x,y)
   integer, intent(in) :: indx, N
   integer, intent(out) :: x,y
-  x = indx/N !!! I think this should be (indx/N + 1)
+  !x = indx/N !!! I think this should be (indx/N + 1)
              !!! Example: the first row (x = 1) contains sites with indx {0:N-1}
              !!!          indx/N would make x = 0 for all in first row. 
-
-  y = mod(indx/N) !!! Should this be mod((indx+1),N) ?
+  x = (indx/N +1)
+  ! y = mod(indx/N) !!! Should this be mod((indx+1),N) ?
                   !!! Similar reasoning as above
-
+  y = mod((indx+1),N)
 
                    !!! Note: these would be fine if we changed how our lattice was defined: each dimension ranging from 0 to N-1 rather than 1 to N
 end subroutine indx_to_coord
@@ -84,7 +95,7 @@ end subroutine indx_to_coord
 subroutine coord_to_indx(x,y,N,indx)
   integer, intent(in) :: x,y,N
   integer, intent(out) :: indx
-  indx = x*N+y !!I think this should be (x-1)*N + (y-1)
+  ! indx = x*N+y !!I think this should be (x-1)*N + (y-1)
                !!Example (N =3): 
                !!        x = 1, y = 1 results in indx = 0
                !!        x = 1, y = 2 results in indx = 1
@@ -96,6 +107,8 @@ subroutine coord_to_indx(x,y,N,indx)
                !!        0, 1, 2
                !!        3, 4, 5
                !!        6, 7, 8
+
+  indx = (x-1)*N + (y-1)
  
 end subroutine coord_to_indx
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
