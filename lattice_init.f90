@@ -1,14 +1,14 @@
 module lattice_init
 
-
   Implicit None
 
-  public init_lattice
-  public randy
-  public find_friends
   public initialize_all
   public coord_to_indx
   public indx_to_coord
+
+  private init_lattice
+  private randy
+  private find_friends
 
 contains
   subroutine initialize_all(lattice,N,spin,friends)
@@ -16,7 +16,7 @@ contains
     integer intent(out) :: lattice(N,N), friends(4,0:(N*N-1))
 
     call init_lattice(lattice,N,spin)
-    call build_friends(N,lattice,friends)
+    call find_friends(N,friends)
 
   end subroutine initialize_all
 
@@ -49,24 +49,14 @@ contains
        end do
     end do
 
-
   end subroutine randy
-
-  subroutine build_friends(N,lattice,friends)
-    integer, intent(in):: N, lattice(N,N)
-    integer, intent(inout) :: friends(4,0:(N*N-1))
-    
-    integer :: counter = 0
-    do counter = 0, N*N-1
-       call find_friends(N,friends,counter)
-    end do
-  end subroutine build_friends
   
-  subroutine find_friends(N,friends,counter)
-    integer, intent(in) :: N, counter
+  subroutine find_friends(N,friends)
+    integer, intent(in) :: N
     integer, intent(out) :: friends(4,0:(N*N-1))
-    integer :: i, j, north_indx, east_indx, south_indx, west_indx
+    integer :: i, j, counter, north_indx, east_indx, south_indx, west_indx
 
+    do counter = 0, N*N-1
        call indx_to_coord(counter,N,i,j)
        if (i == 1) then !!North
           call coord_to_indx(N,j,N,north_indx)
@@ -95,6 +85,7 @@ contains
           call coord_to_indx(i,j-1,N,west_indx)
        end if
        friends(4,indx) = west_indx
+    end do
 
   end subroutine find_friends
 

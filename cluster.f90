@@ -29,10 +29,8 @@ contains
     stack(2,1) = random2
     lattice(random1,random2) = -1*lattice(random1,random2)
 
-    !start checking cluster growth
-    !Does not leave this do loop
     do while (size(stack) > 0)
-
+!NEED TO FIX WITH FRIENDS ARRAY
        !Left Boundary Condition Check
        if (stack(1,1) == 1) then
           if (lattice(N,stack(2,1)) == init_site) then

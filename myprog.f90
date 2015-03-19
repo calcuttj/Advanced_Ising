@@ -9,7 +9,7 @@ program advanced_ising
 
   integer, parameter :: N=10
   integer :: ising_lattice(N,N), FRIENDS(4,0:(N*N-1))
-  integer :: iter, iterations = 100
+  integer :: iter, iterations = 300
   real(8) :: initial_temp = 0.05
   real(8) :: final_temp = 5d0
   real(8) :: T, temp_step_size = 0.05
@@ -25,21 +25,17 @@ program advanced_ising
   open(unit=21,file="SuscVsT.txt")
 
   do while (T <= final_temp)
-     if (flag == 0) then
-        call randy(ising_lattice,N)
-     else
-        call init_lattice(ising_lattice,N,flag)
-     end if
-     print*, T
-     call find_friends(N,friends)
+
+     call init_lattice(ising_lattice,N,flag)
      do iter = 1, iterations
         call grow_cluster(ising_lattice,N,T)    
      end do
 
      call calc_mag(ising_lattice,N,mag) 
+     call calc_suscept(T,mag,prev_mag,suscept)
+
      write(20,*) T,mag
- !    call calc_suscept(T,mag,prev_mag,suscept)
- !    write(21,*) T,suscept
+     write(21,*) T,suscept
      T = T + temp_step_size
   end do
 end program advanced_ising
