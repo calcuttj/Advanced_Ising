@@ -8,6 +8,9 @@ module lattice_init
   public find_friends
   
 contains
+  subroutine initialize_all
+    
+  end subroutine initialize_all
   subroutine init_lattice(lattice,N,spin)
     integer, intent(in) :: N,spin
     integer, dimension(N,N), intent(out) :: lattice
@@ -37,8 +40,8 @@ contains
   end subroutine randy
 
   subroutine build_friends(N,lattice,friends)
-    integer, intent(in):: N, lattice
-    integer, intent(out) :: friends
+    integer, intent(in):: N, lattice(N,N)
+    integer, intent(out) :: friends(4,0:(N*N-1))
     
     integer :: counter = 0
     do counter = 0, N*N-1
