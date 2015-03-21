@@ -6,14 +6,14 @@ module lattice_init
   public coord_to_indx
   public indx_to_coord
 
-  private init_lattice
-  private randy
-  private find_friends
+  public init_lattice
+  public randy
+  public find_friends
 
 contains
   subroutine initialize_all(lattice,N,spin,friends)
-    integer intent(in) :: N, spin
-    integer intent(out) :: lattice(N,N), friends(4,0:(N*N-1))
+    integer, intent(in) :: N, spin
+    integer, intent(out) :: lattice(N,N), friends(4,0:(N*N-1))
 
     call init_lattice(lattice,N,spin)
     call find_friends(N,friends)
@@ -63,28 +63,28 @@ contains
        else
           call coord_to_indx(i-1,j,N,north_indx)
        end if
-       friends(1,indx) = north_indx
+       friends(1,counter) = north_indx
 
        if (j == N) then !!East
           call coord_to_indx(i,1,N,east_indx)
        else
           call coord_to_indx(i,j+1,N,east_indx)
        end if
-       friends(2,indx) = east_indx
+       friends(2,counter) = east_indx
 
        if (i == N) then !!South
           call coord_to_indx(1,j,N,south_indx)
        else 
           call coord_to_indx(i+1,j,N,south_indx)
        end if
-       friends(3,indx) = south_indx
+       friends(3,counter) = south_indx
 
        if (j == 1) then !!West
           call coord_to_indx(i,N,N,west_indx)
        else
           call coord_to_indx(i,j-1,N,west_indx)
        end if
-       friends(4,indx) = west_indx
+       friends(4,counter) = west_indx
     end do
 
   end subroutine find_friends
