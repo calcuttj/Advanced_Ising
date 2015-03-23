@@ -32,16 +32,12 @@ contains
     do while (size(queue) > 0)
        call getSpin(queue(1),N,lattice,spin) !!take first indx in queue
        if (spin == init_spin) then !!check if it has same spin
-          write(*,*) "SAME SPIN"
           call random_number(test) !! Apply the MC test
           if ((1-exp(-2d0/T)) > test) then
-             write(*,*) "MC successful"
              call addtoCluster(N,queue(1),friends,lattice,queue) !!flips spins and adds neighbours to queue
           end if
        end if
-       write(*,*) "Queue size: ", size(queue)
        call decrease_queue(queue) !! rid of first indx in queue
-       write(*,*) "New size: ", size(queue)
     end do
 
   end subroutine grow_cluster
@@ -62,19 +58,16 @@ contains
     integer, intent(in) :: friends(4,0:N*N-1)
     integer, intent(inout),allocatable :: queue(:)
     integer, intent(inout) :: lattice(N,N)
-    integer :: i,j,k
+    integer :: i,j,k, site
     
-
+    site=indx
     !flip spin
     call indx_to_coord(indx,N,i,j)
     lattice(i,j) = -1*lattice(i,j)
 
     !add friends to queue
     do k = 1, 4
-       write(*,*) "size of queue: ",  size(queue)
-       write(*,*) friends(k,indx)
-       call increase_queue(queue,friends(k,indx))
-       write(*,*) "got here", k
+       call increase_queue(queue,friends(k,site))
     end do
   end subroutine addtoCluster
 
@@ -84,7 +77,7 @@ contains
     integer, intent(in)::indx
     integer new_dim
     integer :: i
-    write(*,*) indx
+
     i = indx
     new_dim = size(queue) + 1
     ALLOCATE(tmp_arr(new_dim))
@@ -95,7 +88,6 @@ contains
     ALLOCATE(queue(new_dim))
     queue=tmp_arr
     queue(size(queue)) = i
-    write (*,*) queue(:)
   ENDSUBROUTINE increase_queue
 
   SUBROUTINE decrease_queue(queue)
