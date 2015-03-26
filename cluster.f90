@@ -10,8 +10,7 @@ module cluster
   public addtoCluster
   public init_random_seed
 contains
-  subroutine grow_cluster(lattice,friends,N,T) !!before writing this, we need the individual subroutines called within to be complete
-!!if we don't, we run the risk of not knowing/anticipating what they need to do/how they need to work. i.e. increasing/decreasing the stack 
+  subroutine grow_cluster(lattice,friends,N,T)
     integer, intent(in) :: N, friends(4,0:N*N-1)
     integer, intent(inout) :: lattice(N,N)
     integer, allocatable :: queue(:)
@@ -20,31 +19,29 @@ contains
     real(8) :: rand1, test
     integer :: rand_indx, init_spin, spin
 
-
-    !!Get the random point in the lattice, along with it's spin
     call random_number(rand1)
     rand_indx = ceiling(rand1*(N*N))-1
     call getSpin(rand_indx,N,lattice,init_spin)
     allocate(queue(0))
-    ! add the random point neighbours to the queue  
+
     call addtoCluster(N,rand_indx,friends,lattice,queue)
     
     do while (size(queue) > 0)
-       call getSpin(queue(1),N,lattice,spin) !!take first indx in queue
-       if (spin == init_spin) then !!check if it has same spin
-          call random_number(test) !! Apply the MC test
+       call getSpin(queue(1),N,lattice,spin)
+       if (spin == init_spin) then
+          call random_number(test)
           if ((1-exp(-2d0/T)) > test) then
-             call addtoCluster(N,queue(1),friends,lattice,queue) !!flips spins and adds neighbours to queue
+             call addtoCluster(N,queue(1),friends,lattice,queue) 
           end if
        end if
-       call decrease_queue(queue) !! rid of first indx in queue
+       call decrease_queue(queue)
     end do
 
   end subroutine grow_cluster
 
   subroutine getSpin(indx,N,lattice,spin)
     integer, intent(in) :: indx, N
-    integer, intent(inout) :: lattice(N,N)
+    integer, intent(in) :: lattice(N,N)
     integer, intent(out) :: spin
     integer :: i,j
 
@@ -61,11 +58,8 @@ contains
     integer :: i,j,k, site
     
     site=indx
-    !flip spin
     call indx_to_coord(indx,N,i,j)
     lattice(i,j) = -1*lattice(i,j)
-
-    !add friends to queue
     do k = 1, 4
        call increase_queue(queue,friends(k,site))
     end do

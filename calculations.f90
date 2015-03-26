@@ -34,7 +34,7 @@ contains
   subroutine calc_energy(N,friends,lattice,energy)
     integer, intent(in) :: N
     integer, intent(in) :: friends(4,0:N*N-1)
-    integer, intent(inout) :: lattice(N,N)
+    integer, intent(in) :: lattice(N,N)
     real(8), intent(inout) :: energy
     integer :: indx1, indx2, i, spin1, spin2
 
@@ -46,7 +46,7 @@ contains
           energy = energy - spin1*spin2
        end do
     end do
-
+    energy = abs(energy/(N*N-1))
   end subroutine calc_energy
 
   subroutine calc_heat_capacity(T,energy,prev_energy,C_v)
