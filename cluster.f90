@@ -102,16 +102,16 @@ contains
     implicit none
 
     integer, allocatable :: seed(:)
-    integer :: i, n, un, istat, dt(8), pid, t(2), s
+    integer :: i, n, istat, dt(8), pid, t(2), s
     integer(8) :: count, tms
     call random_seed(size = n)
     allocate(seed(n))
-    open(newunit=un, file="/dev/urandom", access="stream",&
+    open(unit=30, file="/dev/urandom", access="stream",&
          form="unformatted", action="read", status="old", &
          iostat=istat)
     if (istat == 0) then
-       read(un) seed
-       close(un)
+       read(30) seed
+       close(30)
     else
        call system_clock(count)
        if (count /= 0) then
@@ -143,7 +143,4 @@ contains
     call random_seed(put=seed)
   end subroutine init_random_seed
 
-
 end module cluster
-
-
