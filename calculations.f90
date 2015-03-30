@@ -16,7 +16,7 @@ contains
 
     mag = 0
     mag = sum(lattice(:,:))
-    mag = ABS(mag/(N*N))
+    mag = mag/(N*N)
 
   end subroutine calc_mag
 
@@ -46,7 +46,7 @@ contains
           energy = energy - spin1*spin2
        end do
     end do
-    energy = abs(energy/(N*N-1))
+    energy = energy/(N*N-1)
   end subroutine calc_energy
 
   subroutine calc_heat_capacity(T,energy,prev_energy,C_v)

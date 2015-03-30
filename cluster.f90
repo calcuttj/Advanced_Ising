@@ -1,15 +1,62 @@
 module cluster
   use lattice_init
   implicit none
- 
 
   public grow_cluster
+  public grow_cluster_new
   public increase_queue
   public decrease_queue
   public getSpin
   public addtoCluster
   public init_random_seed
+
 contains
+  subroutine grow_cluster_new(lattice,friends,N,T)
+    integer, intent(in) :: N, friends(4,0:N*N-1)
+    integer, intent(inout) :: lattice(N,N)
+    integer :: queue(N*N)
+    real(8), intent(in) :: T
+    
+    real(8) :: rand1, test
+    integer :: rand_indx, init_spin, spin,i,j,k,site
+
+    integer :: head, tail
+    head = 1
+    tail = 2
+    call random_number(rand1)
+    rand_indx = ceiling(rand1*(N*N))-1
+    call getSpin(rand_indx,N,lattice,init_spin)
+    call indx_to_coord(rand_indx,N,i,j)
+    lattice(i,j) = -1*lattice(i,j)
+    queue(head) = rand_indx
+    do while (head<tail)
+       do k = 1,4
+          site = friends(k,queue(head))
+          call getSpin(site,N,lattice,spin)
+          if (spin == init_spin) then
+             call random_number(test)
+             if ((1-exp(-2d0/T)) > test) then 
+                call indx_to_coord(site,N,i,j)
+                lattice(i,j) = -1*lattice(i,j)
+                queue(tail) = site
+                tail = tail + 1
+             end if
+          end if
+       end do
+       head = head + 1
+    end do
+    
+  end subroutine grow_cluster_new
+
+
+
+
+
+
+
+
+
+
   subroutine grow_cluster(lattice,friends,N,T)
     integer, intent(in) :: N, friends(4,0:N*N-1)
     integer, intent(inout) :: lattice(N,N)
